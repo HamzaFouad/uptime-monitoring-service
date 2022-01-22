@@ -1,0 +1,41 @@
+{
+  "name": "uptime-monitoring-service",
+  "version": "1.0.0",
+  "description": "Simple service to monitor machines uptime/downtime ",
+  "main": "index.js",
+  "scripts": {
+    "build": "babel src --out-dir dist",
+    "dev": "nodemon --exec yarn restart",
+    "restart": "yarn build && yarn start",
+    "start": "node dist/index.js",
+    "clean": "rimraf dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HamzaFouad/uptime-monitoring-service.git"
+  },
+  "author": "HamzaFouad <HamzaMoFouad@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/HamzaFouad/uptime-monitoring-service/issues"
+  },
+  "homepage": "https://github.com/HamzaFouad/uptime-monitoring-service#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.16.8",
+    "@babel/core": "^7.16.12",
+    "@babel/plugin-proposal-class-properties": "^7.16.7",
+    "@babel/plugin-proposal-object-rest-spread": "^7.16.7",
+    "@babel/preset-env": "^7.16.11",
+    "babel-core": "^6.26.3",
+    "dotenv": "^14.2.0",
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.15",
+    "prettier": "^2.5.1"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.1",
+    "cors": "^2.8.5",
+    "express": "^4.17.2",
+    "mongoose": "^6.1.7"
+  }
+}
