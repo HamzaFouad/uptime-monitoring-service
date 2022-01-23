@@ -14,6 +14,14 @@ const baseConfig = {
     jwt: process.env.JWT_SECRET,
     jwtExp: process.env.JWT_EXP || "30m",
   },
+  email: {
+    smtp_host: `${process.env.SMTP_HOST}`,
+    smtp_port: `${process.env.SMTP_PORT || "587"}`,
+    secret: `${process.env.EMAIL_SECRET}`,
+    confirm_expire_time: `${process.env.CONFIRM_EMAIL_EXPIRE_TIME || "1h"}`,
+    no_reply_email: "no-reply@uptime.com",
+    password: `${process.env.EMAIL_PASSWORD}`,
+  },
 };
 
 let envConfig = {};
@@ -21,19 +29,20 @@ let envConfig = {};
 switch (env) {
   case "dev":
   case "development":
-    envConfig = require("./dev").config;
+    envConfig = require("./envs/dev").config;
     break;
   case "prod":
   case "production":
-    envConfig = require("./prod").config;
+    envConfig = require("./envs/prod").config;
     break;
   case "test":
   case "testing":
-    envConfig = require("./testing").config;
+    envConfig = require("./envs/testing").config;
     break;
   default:
-    envConfig = require("./dev").config;
+    envConfig = require("./envs/dev").config;
 }
 
-console.log("mergedConfig:\n", merge(baseConfig, envConfig));
+if (env === "development") console.log("mergedConfig:\n", merge(baseConfig, envConfig));
+
 export default merge(baseConfig, envConfig);
