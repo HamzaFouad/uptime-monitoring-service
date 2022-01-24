@@ -1,7 +1,7 @@
 import { body } from "express-validator";
+import { merge } from "lodash";
 
-export const checkValidator = [
-  body("url").exists().withMessage("URL is required.").isURL().withMessage("Invalid URL format.").isString().trim(),
+const commonValidators = [
   body("name").optional().trim(),
   body("path").optional().trim(),
   body("port").optional().isNumeric(),
@@ -16,3 +16,11 @@ export const checkValidator = [
   body("interval").optional().isNumeric(),
   body("threshold").optional().isNumeric(),
 ];
+
+export const checkCreateValidator = merge(commonValidators, [
+  body("url").exists().withMessage("URL is required.").isURL().withMessage("Invalid URL format.").isString().trim(),
+]);
+
+export const checkUpdateValidator = merge(commonValidators, [
+  body("url").optional().isURL().withMessage("Invalid URL format.").isString().trim(),
+]);

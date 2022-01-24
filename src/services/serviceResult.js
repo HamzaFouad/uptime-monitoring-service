@@ -1,5 +1,5 @@
 export const serviceResult = (data, status, errors) => ({
-  data: data.toJSON(),
+  data: data,
   status: status,
   errors: errors ? errors.toString() : "",
 });
