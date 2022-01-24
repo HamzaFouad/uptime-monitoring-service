@@ -3,6 +3,7 @@ import { json, urlencoded } from "body-parser";
 import config from "./config";
 import { connect } from "./config/db";
 import authRouter from "./auth/auth.router";
+import checkRouter from "./app/routers/checkRouter";
 export const app = express();
 
 app.use(json());
@@ -13,6 +14,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/auth", authRouter);
+app.use("/api", checkRouter);
 
 export const start = async () => {
   try {

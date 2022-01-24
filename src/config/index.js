@@ -43,6 +43,6 @@ switch (env) {
     envConfig = require("./envs/dev").config;
 }
 
-if (env === "development") console.log("mergedConfig:\n", merge(baseConfig, envConfig));
+// if (env === "development") console.log("mergedConfig:\n", merge(baseConfig, envConfig));
 
 export default merge(baseConfig, envConfig);

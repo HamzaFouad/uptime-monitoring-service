@@ -1,7 +1,7 @@
 import _ from "lodash";
-import { User } from "../resources/user/user.model";
+import { User } from "../entities/userEntity";
 import { verifyHash } from "../utils/crypto";
-import { verifyToken } from "./helpers";
+import { verifyToken } from "./authHelpers";
 
 export const signIn = async (req, res) => {
   if (!req.body.email || !req.body.password) {

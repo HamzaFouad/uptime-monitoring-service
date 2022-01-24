@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { hash } from "../../utils/crypto";
+import { hash } from "../utils/crypto";
 
 const userSchema = new mongoose.Schema(
   {
@@ -17,6 +17,10 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    observers: {
+      type: [mongoose.Schema.Types.ObjectId],
+      ref: "check",
+    },
   },
   { timestamps: true }
 );
@@ -25,7 +29,7 @@ userSchema.pre("save", async function (next) {
   try {
     this.password = await hash(this.password);
   } catch {
-    console.log("error while hashing password");
+    console.log("Error while hashing password");
   }
   next();
 });
