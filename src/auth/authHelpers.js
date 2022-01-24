@@ -14,7 +14,7 @@ export const newToken = (user) => {
 
 export const verifyToken = (token) => {
   try {
-    return jwt.verify(token, config.secrets.jwt); // returns user.id back after verification
+    return jwt.verify(token, config.secrets.jwt); // returns { id, iat, exp }
   } catch {
     console.error("Something went wrong when verifying user's token");
   }

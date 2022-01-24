@@ -17,10 +17,12 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    observers: {
-      type: [mongoose.Schema.Types.ObjectId],
-      ref: "check",
-    },
+    observers: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "check",
+      },
+    ],
   },
   { timestamps: true }
 );

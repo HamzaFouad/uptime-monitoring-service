@@ -1,23 +1,26 @@
 import _ from "lodash";
 import { User } from "../entities/userEntity";
 import { verifyHash } from "../utils/crypto";
-import { verifyToken } from "./authHelpers";
+import { newToken, verifyToken } from "./authHelpers";
 
 export const signIn = async (req, res) => {
   if (!req.body.email || !req.body.password) {
     return res.status(400).send({ message: "Invalid email or password" });
   }
   try {
-    const userExists = await User.findOne({ email: req.body.email });
-    if (!userExists) return res.status(401).send({ message: "Invalid email or password" });
+    const user = await User.findOne({ email: req.body.email })
+      .select("email password isVerified")
+      .exec();
+    if (!user) return res.status(401).send({ message: "Invalid email or password" });
 
-    if (!(await verifyHash(userExists.password, req.body.password)))
+    if (!(await verifyHash(user.password, req.body.password)))
       return res.status(401).send({ message: "Invalid email or password" });
 
-    if (!userExists.isVerified)
+    if (!user.isVerified)
       return res.status(401).send({ message: "Your Email has not been verified." });
 
-    return res.status(200).send("User successfully logged in");
+    const token = newToken(user);
+    return res.status(201).send({ token: token });
   } catch (e) {
     return res.status(500).end();
   }
@@ -31,11 +34,9 @@ export const signUp = async (req, res) => {
   try {
     const userExists = await User.findOne({ email: req.body.email });
     if (userExists) {
-      return res
-        .status(400)
-        .send({
-          error: { message: "This email address is already associated with another account." },
-        });
+      return res.status(400).send({
+        error: { message: "This email address is already associated with another account." },
+      });
     }
 
     const user = await User.create({ ...req.body });
@@ -46,6 +47,24 @@ export const signUp = async (req, res) => {
   } catch (e) {
     return res.status(500).end();
   }
+};
+
+export const protect = async (req, res, next) => {
+  const bearer = req.headers.authorization;
+  if (!bearer || !bearer.startsWith("Bearer ")) return res.status(401).end();
+  const token = bearer.split("Bearer ")[1].trim();
+  let payload;
+  try {
+    payload = verifyToken(token);
+  } catch (e) {
+    return res.status(401).end();
+  }
+  const user = await User.findById(payload.id).select("_id isVerified").lean().exec();
+  if (!user) return res.status(401).send({ message: "Unauthorized" });
+  if (!user.isVerified)
+    return res.status(404).send({ message: "Your Email has not been verified." });
+  req.user = user;
+  next();
 };
 
 export const confirmEmail = async (req, res) => {

@@ -4,16 +4,19 @@ import config from "./config";
 import { connect } from "./config/db";
 import authRouter from "./auth/auth.router";
 import checkRouter from "./app/routers/checkRouter";
+import { protect } from "./auth/auth.controllers";
+
 export const app = express();
 
 app.use(json());
 app.use(urlencoded({ extended: true }));
 
-app.get("/", (req, res) => {
+app.get("/", (_, res) => {
   return res.send("Express setup is initialized!");
 });
 
-app.use("/api/auth", authRouter);
+app.use("/auth", authRouter);
+app.use("/api", protect);
 app.use("/api", checkRouter);
 
 export const start = async () => {

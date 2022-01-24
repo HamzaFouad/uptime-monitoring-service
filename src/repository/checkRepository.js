@@ -1,20 +1,32 @@
 import { CheckConfig } from "../entities/checkConfigEntity";
 import { Check } from "../entities/checkEntity";
+import { User } from "../entities/userEntity";
 
 export const createCheckRepository = async (data) => {
+  const userId = data.user._id;
+  console.log("userId type: ", typeof userId);
   try {
-    const config = new CheckConfig(data);
-    const configModel = await CheckConfig.create(config);
+    const configModel = await CheckConfig.create({ ...data });
     const checkModel = await Check.create({ ...data, config: configModel._id });
+    const updatedUser = await User.findByIdAndUpdate(
+      { _id: userId },
+      { $push: { observers: checkModel._id } }
+    );
     return checkModel;
   } catch (e) {
     return null;
   }
 };
 
-export const updateCheckRepository = async (id, check) => {
+export const updateCheckRepository = async (id, data) => {
   try {
-    const checkModel = await Check.findOneAndUpdate({ _id: id }, check, { new: true })
+    const config = new CheckConfig(data);
+    const configModel = await CheckConfig.create(config);
+    const checkModel = await Check.findOneAndUpdate(
+      { _id: id },
+      { ...data, configModel },
+      { new: true }
+    )
       .lean()
       .exec();
     return checkModel;
@@ -23,9 +35,13 @@ export const updateCheckRepository = async (id, check) => {
   }
 };
 
-export const deleteCheckRepository = async (id) => {
+export const deleteCheckRepository = async (data) => {
+  const userId = data.user._id;
   try {
-    const checkModel = await Check.findOneAndDelete({ _id: id }, { new: true }).lean().exec();
+    const checkModel = await Check.findOneAndDelete({ _id: data.docId }, { new: true })
+      .lean()
+      .exec();
+    await User.findByIdAndUpdate({ _id: userId }, { $pull: { observers: checkModel._id } });
     return checkModel;
   } catch (e) {
     return false;

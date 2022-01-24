@@ -27,9 +27,9 @@ export const updateCheckService = async (id, check) => {
   }
 };
 
-export const deleteCheckService = async (id, check) => {
+export const deleteCheckService = async (data) => {
   try {
-    const result = await deleteCheckRepository(id, check);
+    const result = await deleteCheckRepository(data);
     if (result === false) return serviceResult(null, 404, "Invalid Id");
     if (!result) return serviceResult(null, 204, "");
     return serviceResult(result, 204, null);
