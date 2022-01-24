@@ -14,7 +14,8 @@ export const signIn = async (req, res) => {
     if (!(await verifyHash(userExists.password, req.body.password)))
       return res.status(401).send({ message: "Invalid email or password" });
 
-    if (!userExists.isVerified) return res.status(401).send({ message: "Your Email has not been verified." });
+    if (!userExists.isVerified)
+      return res.status(401).send({ message: "Your Email has not been verified." });
 
     return res.status(200).send("User successfully logged in");
   } catch (e) {
@@ -32,7 +33,9 @@ export const signUp = async (req, res) => {
     if (userExists) {
       return res
         .status(400)
-        .send({ error: { message: "This email address is already associated with another account." } });
+        .send({
+          error: { message: "This email address is already associated with another account." },
+        });
     }
 
     const user = await User.create({ ...req.body });
@@ -49,7 +52,9 @@ export const confirmEmail = async (req, res) => {
   try {
     const id = verifyToken(req.params.token);
     if (!id) {
-      return res.status(400).send("Invalid token, please use another token and try again later.");
+      return res
+        .status(400)
+        .send("Invalid token, please use another token and try again later.");
     }
 
     // let user = await User.findOneAndUpdate({ _id: "61ed87d5b47d6f84652b0618" }, { isVerified: true });

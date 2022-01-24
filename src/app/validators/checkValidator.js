@@ -18,7 +18,13 @@ const commonValidators = [
 ];
 
 export const checkCreateValidator = merge(commonValidators, [
-  body("url").exists().withMessage("URL is required.").isURL().withMessage("Invalid URL format.").isString().trim(),
+  body("url")
+    .exists()
+    .withMessage("URL is required.")
+    .isURL()
+    .withMessage("Invalid URL format.")
+    .isString()
+    .trim(),
 ]);
 
 export const checkUpdateValidator = merge(commonValidators, [
