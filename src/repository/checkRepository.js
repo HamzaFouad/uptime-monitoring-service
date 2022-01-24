@@ -1,8 +1,11 @@
+import { CheckConfig } from "../entities/checkConfigEntity";
 import { Check } from "../entities/checkEntity";
 
-export const createCheckRepository = async (check) => {
+export const createCheckRepository = async (data) => {
   try {
-    const checkModel = await Check.create({ ...check });
+    const config = new CheckConfig(data);
+    const configModel = await CheckConfig.create(config);
+    const checkModel = await Check.create({ ...data, config: configModel._id });
     return checkModel;
   } catch (e) {
     return null;
