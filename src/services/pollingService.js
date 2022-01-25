@@ -4,7 +4,6 @@ import cron from "node-cron";
 
 export const execPollingSchedule = async (data) => {
   const userId = data.userId;
-  console.log("data: ", data);
   let prevTime = Date.now();
   const timeout = data?.config?.timeout ? data?.config?.timeout : 10;
   const url = data.checkModel.url;
@@ -51,8 +50,6 @@ const pingService = async (checkId, url, path, portocol, port, timeout) => {
     const pingResult = await ping.promise.probe(receiverEnd, {
       timeout: timeout,
     });
-    console.log("Inside Ping Service!", pingResult);
-
     let responseTime = Date.now() - beforePing;
     await computeAvgResponseTime(userId, checkId, responseTime);
     return pingResult;
