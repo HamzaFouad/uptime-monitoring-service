@@ -5,10 +5,16 @@ import {
   deleteCheckRepository,
 } from "../repository/checkRepository";
 
+import { execPollingSchedule } from "./pollingService";
+
 export const createCheckService = async (check) => {
   try {
     const result = await createCheckRepository(check);
     if (!result) return serviceResult(null, 400, "Invalid request");
+
+    const task = execPollingSchedule(result);
+
+    saveCheckTask(task);
     return serviceResult(result, 201, null);
   } catch (e) {
     console.error(e);
@@ -37,4 +43,8 @@ export const deleteCheckService = async (data) => {
     console.error(e);
     return serviceResult(null, 500, "Something went wrong while delete check from database.");
   }
+};
+
+const saveCheckTask = (task) => {
+  console.log("check Task is saved!");
 };

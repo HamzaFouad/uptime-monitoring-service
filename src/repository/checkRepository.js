@@ -12,7 +12,7 @@ export const createCheckRepository = async (data) => {
       { _id: userId },
       { $push: { observers: checkModel._id } }
     );
-    return checkModel;
+    return { userId, checkModel };
   } catch (e) {
     return null;
   }
@@ -21,7 +21,10 @@ export const createCheckRepository = async (data) => {
 export const updateCheckRepository = async (id, data) => {
   try {
     const config = new CheckConfig(data);
-    const configModel = await CheckConfig.create(config);
+    let configModel;
+
+    if (config) configModel = await CheckConfig.create(config);
+
     const checkModel = await Check.findOneAndUpdate(
       { _id: id },
       { ...data, configModel },
@@ -29,6 +32,7 @@ export const updateCheckRepository = async (id, data) => {
     )
       .lean()
       .exec();
+
     return checkModel;
   } catch (e) {
     return null;
@@ -45,5 +49,18 @@ export const deleteCheckRepository = async (data) => {
     return checkModel;
   } catch (e) {
     return false;
+  }
+};
+
+export const queryOneCheckRepository = async (query) => {
+  try {
+    const doc = await Check.findOne({ ...query })
+      .lean()
+      .exec();
+    console.log("doc: ", doc);
+    return doc;
+  } catch (e) {
+    console.error(e);
+    res.status(400).end();
   }
 };
